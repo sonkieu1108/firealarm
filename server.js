@@ -23,8 +23,10 @@ let sensorData = {
     alarm: false
 };
 
-// Biến để theo dõi trạng thái báo động trước đó
+// Biến để theo dõi trạng thái báo động và thời gian gửi email
 let previousAlarmState = false;
+let lastEmailSentTime = 0; // Thời gian gửi email cuối cùng (timestamp)
+const emailCooldown = 5 * 60 * 1000; // 5 phút (tính bằng mili giây)
 
 // Định nghĩa ngưỡng cảnh báo
 const thresholds = {
@@ -50,7 +52,7 @@ const transporter = nodemailer.createTransport({
 async function sendAlertEmail() {
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: "recipient@example.com", // Thay bằng email của bạn
+        to: "kieuson9a2@gmail.com", // Thay bằng email của bạn
         subject: "CẢNH BÁO CHÁY!",
         text: `Hệ thống phát hiện nguy cơ cháy!\n\nDữ liệu hiện tại:\n- Khói: ${sensorData.smoke.toFixed(2)} ppm\n- Gas: ${sensorData.gas.toFixed(2)} ppm\n- Hồng ngoại: ${sensorData.infrared.toFixed(2)}%\n- Nhiệt độ: ${sensorData.temperature.toFixed(1)}°C\n- Độ ẩm: ${sensorData.humidity.toFixed(1)}%`,
         html: `<h2>CẢNH BÁO CHÁY!</h2><p>Hệ thống phát hiện nguy cơ cháy!</p><ul><li>Khói: ${sensorData.smoke.toFixed(2)} ppm</li><li>Gas: ${sensorData.gas.toFixed(2)} ppm</li><li>Hồng ngoại: ${sensorData.infrared.toFixed(2)}%</li><li>Nhiệt độ: ${sensorData.temperature.toFixed(1)}°C</li><li>Độ ẩm: ${sensorData.humidity.toFixed(1)}%</li></ul>`
@@ -59,6 +61,7 @@ async function sendAlertEmail() {
     try {
         await transporter.sendMail(mailOptions);
         console.log("Email cảnh báo đã được gửi!");
+        lastEmailSentTime = Date.now(); // Cập nhật thời gian gửi email cuối cùng
     } catch (error) {
         console.error("Lỗi khi gửi email:", error);
     }
@@ -79,9 +82,14 @@ app.post("/data", (req, res) => {
     
     sensorData.alarm = fireDetected || sensorData.alarm;
 
-    // Gửi email nếu chuyển từ không báo động sang báo động
+    // Gửi email nếu chuyển từ không báo động sang báo động và đã qua thời gian cooldown
     if (sensorData.alarm && !previousAlarmState) {
-        sendAlertEmail();
+        const currentTime = Date.now();
+        if (currentTime - lastEmailSentTime >= emailCooldown) {
+            sendAlertEmail();
+        } else {
+            console.log("Email không được gửi do chưa đủ thời gian cooldown.");
+        }
     }
     previousAlarmState = sensorData.alarm;
 
