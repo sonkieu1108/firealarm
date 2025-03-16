@@ -1,257 +1,183 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Cảnh Báo Cháy - Trực Quan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8"> <!-- Thiết lập mã hóa ký tự UTF-8 để hỗ trợ tiếng Việt -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Đảm bảo giao diện tương thích trên các thiết bị di động -->
+    <title>Hệ Thống Cảnh Báo Cháy - Trực Quan</title> <!-- Tiêu đề trang web -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet"> <!-- Tải font Roboto từ Google Fonts -->
     <style>
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0; /* Xóa margin mặc định */
+            padding: 0; /* Xóa padding mặc định */
+            box-sizing: border-box; /* Đảm bảo padding và border không làm tăng kích thước phần tử */
         }
         body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #fff;
+            font-family: 'Roboto', sans-serif; /* Sử dụng font Roboto */
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); /* Nền gradient từ xanh đậm sang xanh dương */
+            min-height: 100vh; /* Chiều cao tối thiểu bằng toàn bộ màn hình */
+            padding: 20px; /* Khoảng cách bên ngoài 20px */
+            color: #fff; /* Màu chữ trắng */
+            display: flex; /* Sử dụng flexbox để căn giữa nội dung */
+            justify-content: center; /* Căn giữa theo chiều ngang */
+            align-items: center; /* Căn giữa theo chiều dọc */
         }
         .container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            animation: fadeIn 1s ease;
+            width: 100%; /* Chiều rộng 100% */
+            max-width: 1200px; /* Chiều rộng tối đa 1200px để chứa tất cả ô trên một hàng */
+            margin: 0 auto; /* Căn giữa container */
+            background: rgba(255, 255, 255, 0.95); /* Nền trắng với độ trong suốt nhẹ */
+            border-radius: 20px; /* Bo góc 20px */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); /* Hiệu ứng bóng đổ */
+            padding: 40px; /* Khoảng cách bên trong 40px */
+            animation: fadeIn 1s ease; /* Hiệu ứng fade-in khi tải trang */
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(20px); } /* Bắt đầu với độ mờ và dịch chuyển xuống */
+            to { opacity: 1; transform: translateY(0); } /* Kết thúc với độ rõ và vị trí gốc */
         }
         h1 {
-            font-size: 36px;
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 36px; /* Kích thước chữ 36px */
+            color: #2c3e50; /* Màu xanh đậm */
+            text-align: center; /* Căn giữa tiêu đề */
+            margin-bottom: 40px; /* Khoảng cách dưới 40px */
+            text-transform: uppercase; /* Chữ in hoa */
+            letter-spacing: 2px; /* Khoảng cách giữa các chữ 2px */
         }
         .overview {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 40px;
+            display: grid; /* Sử dụng grid để sắp xếp các ô cảm biến */
+            grid-template-columns: repeat(5, 1fr); /* Sắp xếp 5 ô trên một hàng, mỗi ô chiếm 1 phần bằng nhau */
+            gap: 20px; /* Khoảng cách giữa các ô 20px */
+            margin-bottom: 40px; /* Khoảng cách dưới 40px */
         }
         .sensor-box {
-            flex: 1;
-            min-width: 200px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            background: #fff; /* Nền trắng */
+            padding: 20px; /* Khoảng cách bên trong 20px */
+            border-radius: 15px; /* Bo góc 15px */
+            text-align: center; /* Căn giữa nội dung */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng đổ nhẹ */
+            transition: transform 0.3s ease; /* Hiệu ứng chuyển động mượt mà */
         }
         .sensor-box:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px); /* Khi hover, nâng ô lên 5px */
         }
         .sensor-box h2 {
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 10px;
+            font-size: 18px; /* Kích thước chữ 18px */
+            color: #555; /* Màu xám đậm */
+            margin-bottom: 10px; /* Khoảng cách dưới 10px */
         }
         .sensor-box .value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #2c3e50;
+            font-size: 32px; /* Kích thước chữ giá trị 32px */
+            font-weight: bold; /* Chữ đậm */
+            color: #2c3e50; /* Màu xanh đậm */
+        }
+        .sensor-box span {
+            display: block; /* Hiển thị đơn vị trên dòng mới */
+            font-size: 14px; /* Kích thước chữ 14px */
+            color: #777; /* Màu xám nhạt */
+            margin-top: 5px; /* Khoảng cách trên 5px */
         }
         .status {
-            text-align: center;
-            padding: 25px;
-            border-radius: 15px;
-            font-size: 28px;
-            font-weight: bold;
-            margin: 0 auto;
-            max-width: 500px;
-            transition: all 0.3s ease;
+            text-align: center; /* Căn giữa nội dung */
+            padding: 30px; /* Tăng khoảng cách bên trong lên 30px để nổi bật hơn */
+            border-radius: 15px; /* Bo góc 15px */
+            font-size: 40px; /* Tăng kích thước chữ lên 40px để nổi bật hơn */
+            font-weight: bold; /* Chữ đậm */
+            margin: 0 auto; /* Căn giữa */
+            max-width: 600px; /* Tăng chiều rộng tối đa lên 600px */
+            transition: all 0.3s ease; /* Hiệu ứng chuyển đổi mượt mà */
         }
         .safe {
-            color: #27ae60;
-            background: #e8f5e9;
+            color: #27ae60; /* Màu xanh lá khi an toàn */
+            background: #e8f5e9; /* Nền xanh nhạt */
         }
         .alert {
-            color: #c0392b;
-            background: #ffebee;
-            animation: pulse 1s infinite;
+            color: #c0392b; /* Màu đỏ khi báo động */
+            background: #ffebee; /* Nền đỏ nhạt */
+            animation: pulse 1s infinite; /* Hiệu ứng nhấp nháy */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Thêm bóng chữ để tăng độ nổi */
         }
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
+            0% { transform: scale(1); } /* Kích thước ban đầu */
+            50% { transform: scale(1.03); } /* Phóng to nhẹ */
+            100% { transform: scale(1); } /* Trở về kích thước ban đầu */
         }
-        .charts {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
+        @media (max-width: 1024px) { /* Điều chỉnh cho màn hình nhỏ hơn 1024px */
+            .overview {
+                grid-template-columns: repeat(2, 1fr); /* Chuyển sang 2 cột trên màn hình nhỏ */
+            }
+            .status {
+                font-size: 32px; /* Giảm kích thước chữ trạng thái */
+            }
         }
-        .chart-container {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        .chart-container h3 {
-            font-size: 18px;
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        canvas {
-            max-width: 100%;
-        }
-        @media (max-width: 768px) {
-            h1 { font-size: 28px; }
-            .sensor-box .value { font-size: 26px; }
-            .status { font-size: 22px; }
-            .charts { grid-template-columns: 1fr; }
+        @media (max-width: 600px) { /* Điều chỉnh cho màn hình rất nhỏ (dưới 600px) */
+            .overview {
+                grid-template-columns: 1fr; /* Chuyển sang 1 cột */
+            }
+            .status {
+                font-size: 24px; /* Giảm thêm kích thước chữ trạng thái */
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Hệ Thống Cảnh Báo Cháy</h1>
-        <div class="overview">
-            <div class="sensor-box">
+    <div class="container"> <!-- Container chính chứa toàn bộ nội dung -->
+        <h1>Hệ Thống Cảnh Báo Cháy</h1> <!-- Tiêu đề -->
+        <div class="overview"> <!-- Phần hiển thị các ô cảm biến -->
+            <div class="sensor-box"> <!-- Ô cảm biến khói -->
                 <h2>Khói</h2>
-                <div class="value" id="smoke">0</div>
-                <span>ppm</span>
+                <div class="value" id="smoke">0</div> <!-- Giá trị khói (ppm) -->
+                <span>ppm</span> <!-- Đơn vị ppm -->
             </div>
-            <div class="sensor-box">
+            <div class="sensor-box"> <!-- Ô cảm biến khí gas -->
                 <h2>Khí Gas</h2>
-                <div class="value" id="gas">0</div>
-                <span>ppm</span>
+                <div class="value" id="gas">0</div> <!-- Giá trị khí gas (ppm) -->
+                <span>ppm</span> <!-- Đơn vị ppm -->
             </div>
-            <div class="sensor-box">
+            <div class="sensor-box"> <!-- Ô cảm biến hồng ngoại -->
                 <h2>Hồng ngoại</h2>
-                <div class="value" id="infrared">0</div>
-                <span>%</span>
+                <div class="value" id="infrared">0</div> <!-- Giá trị hồng ngoại (%) -->
+                <span>%</span> <!-- Đơn vị phần trăm -->
             </div>
-            <div class="sensor-box">
+            <div class="sensor-box"> <!-- Ô cảm biến nhiệt độ -->
                 <h2>Nhiệt độ</h2>
-                <div class="value" id="temperature">0</div>
-                <span>°C</span>
+                <div class="value" id="temperature">0</div> <!-- Giá trị nhiệt độ (°C) -->
+                <span>°C</span> <!-- Đơn vị độ C -->
             </div>
-            <div class="sensor-box">
+            <div class="sensor-box"> <!-- Ô cảm biến độ ẩm -->
                 <h2>Độ ẩm</h2>
-                <div class="value" id="humidity">0</div>
-                <span>%</span>
+                <div class="value" id="humidity">0</div> <!-- Giá trị độ ẩm (%) -->
+                <span>%</span> <!-- Đơn vị phần trăm -->
             </div>
         </div>
-        <div class="status safe" id="alarmStatus">Hệ thống an toàn</div>
-        <div class="charts">
-            <div class="chart-container">
-                <h3>Khói (ppm)</h3>
-                <canvas id="smokeChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Khí Gas (ppm)</h3>
-                <canvas id="gasChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Hồng ngoại (%)</h3>
-                <canvas id="infraredChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Nhiệt độ (°C)</h3>
-                <canvas id="temperatureChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Độ ẩm (%)</h3>
-                <canvas id="humidityChart"></canvas>
-            </div>
-        </div>
+        <div class="status safe" id="alarmStatus">Hệ thống an toàn</div> <!-- Phần hiển thị trạng thái (an toàn hoặc báo động) -->
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Khởi tạo WebSocket
+        // Khởi tạo WebSocket để kết nối với server (wss là WebSocket secure cho HTTPS)
         const socket = new WebSocket(`wss://${window.location.hostname}`);
 
-        // Hàm tạo biểu đồ
-        function createChart(canvasId, label, color) {
-            const ctx = document.getElementById(canvasId).getContext("2d");
-            return new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: label,
-                        data: [],
-                        borderColor: color,
-                        fill: false,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: { display: true, title: { display: true, text: 'Thời gian' } },
-                        y: { display: true, title: { display: true, text: 'Giá trị' } }
-                    }
-                }
-            });
-        }
-
-        // Khởi tạo các biểu đồ riêng biệt
-        const smokeChart = createChart('smokeChart', 'Khói (ppm)', '#e74c3c');
-        const gasChart = createChart('gasChart', 'Gas (ppm)', '#3498db');
-        const infraredChart = createChart('infraredChart', 'Hồng ngoại (%)', '#f1c40f');
-        const temperatureChart = createChart('temperatureChart', 'Nhiệt độ (°C)', '#2ecc71');
-        const humidityChart = createChart('humidityChart', 'Độ ẩm (%)', '#9b59b6');
-
-        // Xử lý dữ liệu từ WebSocket
+        // Xử lý dữ liệu nhận được từ server qua WebSocket
         socket.onmessage = function(event) {
-            const data = JSON.parse(event.data);
+            const data = JSON.parse(event.data); // Chuyển đổi dữ liệu JSON thành object JavaScript
 
-            // Cập nhật giá trị cảm biến
-            document.getElementById("smoke").innerText = data.smoke.toFixed(2);
-            document.getElementById("gas").innerText = data.gas.toFixed(2);
-            document.getElementById("infrared").innerText = data.infrared.toFixed(2);
-            document.getElementById("temperature").innerText = data.temperature.toFixed(1);
-            document.getElementById("humidity").innerText = data.humidity.toFixed(1);
+            // Cập nhật giá trị cảm biến trên giao diện
+            document.getElementById("smoke").innerText = data.smoke.toFixed(2); // Hiển thị giá trị khói, làm tròn 2 chữ số thập phân
+            document.getElementById("gas").innerText = data.gas.toFixed(2); // Hiển thị giá trị khí gas
+            document.getElementById("infrared").innerText = data.infrared.toFixed(2); // Hiển thị giá trị hồng ngoại
+            document.getElementById("temperature").innerText = data.temperature.toFixed(1); // Hiển thị giá trị nhiệt độ
+            document.getElementById("humidity").innerText = data.humidity.toFixed(1); // Hiển thị giá trị độ ẩm
 
             // Cập nhật trạng thái cảnh báo
-            const alarmStatus = document.getElementById("alarmStatus");
-            if (data.alarm) {
-                alarmStatus.innerText = "CẢNH BÁO CHÁY!";
-                alarmStatus.classList.remove("safe");
-                alarmStatus.classList.add("alert");
-            } else {
-                alarmStatus.innerText = "Hệ thống an toàn";
-                alarmStatus.classList.remove("alert");
-                alarmStatus.classList.add("safe");
+            const alarmStatus = document.getElementById("alarmStatus"); // Lấy phần tử hiển thị trạng thái
+            if (data.alarm) { // Nếu có báo động
+                alarmStatus.innerText = "CẢNH BÁO CHÁY!"; // Hiển thị thông báo cảnh báo
+                alarmStatus.classList.remove("safe"); // Xóa class "safe" (an toàn)
+                alarmStatus.classList.add("alert"); // Thêm class "alert" (báo động)
+            } else { // Nếu không có báo động
+                alarmStatus.innerText = "Hệ thống an toàn"; // Hiển thị trạng thái an toàn
+                alarmStatus.classList.remove("alert"); // Xóa class "alert"
+                alarmStatus.classList.add("safe"); // Thêm class "safe"
             }
-
-            // Cập nhật biểu đồ
-            const time = new Date().toLocaleTimeString();
-            const charts = [smokeChart, gasChart, infraredChart, temperatureChart, humidityChart];
-            const values = [data.smoke, data.gas, data.infrared, data.temperature, data.humidity];
-
-            charts.forEach((chart, index) => {
-                chart.data.labels.push(time);
-                chart.data.datasets[0].data.push(values[index]);
-                if (chart.data.labels.length > 20) {
-                    chart.data.labels.shift();
-                    chart.data.datasets[0].data.shift();
-                }
-                chart.update();
-            });
         };
     </script>
 </body>
