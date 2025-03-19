@@ -25,19 +25,16 @@ let sensorData = {
 
 // Biến để theo dõi trạng thái báo động và thời gian gửi email
 let previousAlarmState = false;
-let lastEmailSentTime = 0; // Thời gian gửi email cuối cùng (timestamp)
-const emailCooldown = 5 * 60 * 1000; // 5 phút (tính bằng mili giây)
+let lastEmailSentTime = 0;
+const emailCooldown = 5 * 60 * 1000; // 5 phút
 
-// Định nghĩa ngưỡng cảnh báo
+// Ngưỡng cảnh báo (phải khớp với Arduino)
 const thresholds = {
-    smoke: 3000,  // ppm
-    gas: 3000,    // ppm
-    infrared: 20  // %
+    smoke: 3000,    // ppm
+    gas: 3000,      // ppm
+    infrared: 50,   // %
+    temperature: 50 // °C
 };
-
-// Log để kiểm tra biến môi trường
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
 
 // Cấu hình Nodemailer
 const transporter = nodemailer.createTransport({
@@ -52,7 +49,7 @@ const transporter = nodemailer.createTransport({
 async function sendAlertEmail() {
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: "kieuson9a2@gmail.com", // Thay bằng email của bạn
+        to: "kieuson9a2@gmail.com",
         subject: "CẢNH BÁO CHÁY!",
         text: `Hệ thống phát hiện nguy cơ cháy!\n\nDữ liệu hiện tại:\n- Khói: ${sensorData.smoke.toFixed(2)} ppm\n- Gas: ${sensorData.gas.toFixed(2)} ppm\n- Hồng ngoại: ${sensorData.infrared.toFixed(2)}%\n- Nhiệt độ: ${sensorData.temperature.toFixed(1)}°C\n- Độ ẩm: ${sensorData.humidity.toFixed(1)}%`,
         html: `<h2>CẢNH BÁO CHÁY!</h2><p>Hệ thống phát hiện nguy cơ cháy!</p><ul><li>Khói: ${sensorData.smoke.toFixed(2)} ppm</li><li>Gas: ${sensorData.gas.toFixed(2)} ppm</li><li>Hồng ngoại: ${sensorData.infrared.toFixed(2)}%</li><li>Nhiệt độ: ${sensorData.temperature.toFixed(1)}°C</li><li>Độ ẩm: ${sensorData.humidity.toFixed(1)}%</li></ul>`
@@ -61,7 +58,7 @@ async function sendAlertEmail() {
     try {
         await transporter.sendMail(mailOptions);
         console.log("Email cảnh báo đã được gửi!");
-        lastEmailSentTime = Date.now(); // Cập nhật thời gian gửi email cuối cùng
+        lastEmailSentTime = Date.now();
     } catch (error) {
         console.error("Lỗi khi gửi email:", error);
     }
@@ -75,31 +72,34 @@ app.get('/', (req, res) => {
 // Nhận dữ liệu từ ESP32
 app.post("/data", (req, res) => {
     sensorData = req.body;
-    
-    const fireDetected = (sensorData.smoke > thresholds.smoke && sensorData.gas > thresholds.gas) ||
-                         (sensorData.smoke > thresholds.smoke && sensorData.infrared > thresholds.infrared) ||
-                         (sensorData.gas > thresholds.gas && sensorData.infrared > thresholds.infrared);
-    
-    sensorData.alarm = fireDetected || sensorData.alarm;
 
-    // Gửi email nếu chuyển từ không báo động sang báo động và đã qua thời gian cooldown
+    // Logic phát hiện cháy (đồng bộ với Arduino)
+    const fireDetected = (sensorData.gas > thresholds.gas) ||
+                         (sensorData.smoke > thresholds.smoke && sensorData.infrared > thresholds.infrared) ||
+                         (sensorData.gas > thresholds.gas && sensorData.infrared > thresholds.infrared) ||
+                         (sensorData.temperature > thresholds.temperature);
+
+    sensorData.alarm = fireDetected || sensorData.alarm; // Giữ trạng thái báo động thủ công nếu có
+
+    // Gửi email khi chuyển từ không báo động sang báo động
     if (sensorData.alarm && !previousAlarmState) {
         const currentTime = Date.now();
         if (currentTime - lastEmailSentTime >= emailCooldown) {
             sendAlertEmail();
         } else {
-            console.log("Email không được gửi do chưa đủ thời gian cooldown.");
+            console.log("Email không gửi do chưa đủ thời gian cooldown.");
         }
     }
     previousAlarmState = sensorData.alarm;
 
+    // Gửi dữ liệu qua WebSocket
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify(sensorData));
         }
     });
 
-    console.log("Dữ liệu nhận được từ ESP32:", sensorData);
+    console.log("Dữ liệu từ ESP32:", sensorData);
     res.send({ message: "Dữ liệu đã nhận", status: "OK" });
 });
 
