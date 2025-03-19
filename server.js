@@ -31,7 +31,7 @@ const emailCooldown = 5 * 60 * 1000; // 5 phút
 // Ngưỡng cảnh báo (phải khớp với Arduino)
 const thresholds = {
     smoke: 3000,    // ppm
-    gas: 3000,      // ppm
+    gas: 5000,      // ppm
     infrared: 50,   // %
     temperature: 50 // °C
 };
